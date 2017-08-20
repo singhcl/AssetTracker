@@ -97,5 +97,8 @@ func (t *PharmaTrackerChaincode) Invoke(stub shim.ChaincodeStubInterface, functi
 // Query - legacy function
 // ============================================================================================================================
 func (t *PharmaTrackerChaincode) Query(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
+	if function == "fetch" {             //generic read ledger
+		return read(stub, args)
+	}
 	return nil, errors.New("Unknown supported call - Query()")
 }
