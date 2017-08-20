@@ -1,2 +1,2 @@
-# AssetTracker
-Asset tracker
+# PharmaTracker
+A blockchain based tracker for pharma assets
