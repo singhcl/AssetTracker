@@ -56,16 +56,15 @@ func write_asset(stub shim.ChaincodeStubInterface, args []string) ([]byte, error
 	var err error
 	fmt.Println("starting write asset")
 
-	if len(args) < 18 {
-		return nil, errors.New("Incorrect number of arguments. Expecting at least 18")
+	if len(args) < 16 {
+		return nil, errors.New("Incorrect number of arguments. Expecting at least 16")
 	}
 
 	id := args[0]
 	//check if asset id already exists
-	asset, err := get_asset(stub, id)
+	_, err = get_asset(stub, id)
 	if err == nil {
 		fmt.Println("This asset already exists - " + id)
-		fmt.Println(asset)
 		return nil, errors.New("This asset already exists - " + id)
 	}
 
@@ -90,13 +89,7 @@ func write_asset(stub shim.ChaincodeStubInterface, args []string) ([]byte, error
 				"mfgDate": "` + args[13] + `",
 				"lotNumber": "` + args[14] + `",
 				"expiryDate": "` + args[15] + `"
-			},
-			"children": [
-				{
-					"assetId": "` + args[16] + `", 
-					"assetType": "` + args[17] + `"							
-				}
-			]
+			}
 		}			
 	}`
 
@@ -107,16 +100,14 @@ func write_asset(stub shim.ChaincodeStubInterface, args []string) ([]byte, error
 		fmt.Println("Error while unmarshalling " + err.Error())
 		return nil, errors.New(err.Error())
 	}
-	//fmt.Println("PharmaAsset Object after marshalling - "+)
-	fmt.Printf("PharmaAsset Object after un-marshalling:\n%s", pharmaAsset)
-	if len(args) > 18 {
-		for i := 18; i < len(args); i = i + 2 {
+	//fmt.Printf("PharmaAsset Object after un-marshalling:\n%s", pharmaAsset)
+	if len(args) > 16 {
+		for i := 16; i < len(args); i = i + 2 {
 			var child AssetChildren
-			child.AssetId = "ABC"
-			child.AssetType = "NODE"
+			child.AssetId = args[i]
+			child.AssetType = args[i+1]
 			pharmaAsset.AssetData.Children = append(pharmaAsset.AssetData.Children, child)
 		}
-		fmt.Println("PharmaAsset Object after appending children - \n%s", pharmaAsset)
 	}
 
 	inputByteStr, err := json.Marshal(pharmaAsset)
@@ -125,7 +116,6 @@ func write_asset(stub shim.ChaincodeStubInterface, args []string) ([]byte, error
 		return nil, errors.New(err.Error())
 	}
 
-	fmt.Println("PharmaAsset Object after marshalling - \n%s", inputByteStr)
 	err = stub.PutState(id, inputByteStr) //store asset with id as key
 	if err != nil {
 		return nil, errors.New(err.Error())
