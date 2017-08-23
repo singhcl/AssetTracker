@@ -107,7 +107,8 @@ func write_asset(stub shim.ChaincodeStubInterface, args []string) ([]byte, error
 		fmt.Println("Error while unmarshalling "+err.Error())
 		return nil, errors.New(err.Error())
 	}
-	fmt.Println("PharmaAsset Object after marshalling - ")
+	//fmt.Println("PharmaAsset Object after marshalling - "+)
+	fmt.Printf("PharmaAsset Object after un-marshalling:\n%s", pharmaAsset)
 	if len(args) > 18 {
 		for i := 18; i < len(args); i=i+2 {
 			var child AssetChildren
@@ -116,7 +117,14 @@ func write_asset(stub shim.ChaincodeStubInterface, args []string) ([]byte, error
 			fmt.Println("New child to be appended - ")
 			pharmaAsset.assetData.children = append(pharmaAsset.assetData.children, child)
 		}
-		fmt.Println("PharmaAsset Object after appending children - ")
+		fmt.Println("PharmaAsset Object after appending children - \n%s", pharmaAsset)
+	}
+	
+	tempIn, err := json.Marshal(&pharmaAsset)
+	fmt.Println("PharmaAsset Object after marshalling - \n%s", tempIn)
+	err = stub.PutState(id+"JBB", tempIn)                         //store asset with id as key
+	if err != nil {
+		return nil, errors.New(err.Error())
 	}
 	
 	inputByteStr, err := json.Marshal(pharmaAsset)
@@ -125,6 +133,7 @@ func write_asset(stub shim.ChaincodeStubInterface, args []string) ([]byte, error
 		return nil, errors.New(err.Error())
 	}
 	
+	fmt.Println("PharmaAsset Object after marshalling - \n%s", inputByteStr)
 	err = stub.PutState(id, inputByteStr)                         //store asset with id as key
 	if err != nil {
 		return nil, errors.New(err.Error())
