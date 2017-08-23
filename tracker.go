@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"errors"
-
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 )
 
@@ -11,39 +10,40 @@ type PharmaTrackerChaincode struct {
 }
 
 type PharmaAsset struct {
-	Id         		string        		`json:"id"`      
-	Type       		string        		`json:"type"`
-	Category   		string        		`json:"category"`
-	AssetClass      string        		`json:"assetClass"`
-	TraceData  		AssetTraceData 		`json:"assetTraceData"`
-	Data       		AssetData     		`json:"assetData"`
+	assetId         		string        		`json:"assetId"`      
+	assetType       		string        		`json:"assetType"`
+	category   				string        		`json:"category"`
+	assetClass      		string        		`json:"assetClass"`
+	assetTraceData  		[]AssetTraceData 	`json:"assetTraceData"`
+	assetData       		AssetData     		`json:"assetData"`
 }
 
 type AssetData struct {
-	Info         AssetInfo 		 `json:"info"`
-	Children     []AssetChildren `json:"children"`    
+	information         	AssetInfo 		 	`json:"information"`
+	children     			[]AssetChildren  	`json:"children"`    
 }
 
 type AssetTraceData struct {
-	Owner         		string `json:"owner"`
-	Status   		 	string `json:"status"`
-	EventDateTime      	string `json:"eventDateTime"`
-	Location         	string `json:"location"`
-	GeoLocation   		string `json:"geoLocation"`
+	owner         		string `json:"owner"`
+	status   		 	string `json:"status"`
+	moveDateTime      	string `json:"moveDateTime"`
+	location         	string `json:"location"`
+	geoLocation   		string `json:"geoLocation"`
 }
 
 type AssetInfo struct {
-	Name         	string `json:"name"`
-	Type   		 	string `json:"type"`
-	PkgSize      	int    `json:"pkgSize"`
-	MfgDate         string `json:"mfgDate"`
-	LotNo   		string `json:"lotNo"`
-	ExpiryDate      string `json:"expiryDate"`
+	assetName         	string `json:"assetName"`
+	company				string `json:"company"`
+	packingType   		string `json:"packingType"`
+	packageSize      	string `json:"packageSize"`
+	mfgDate         	string `json:"mfgDate"`
+	lotNumber   		string `json:"lotNumber"`
+	expiryDate      	string `json:"expiryDate"`
 }
 
 type AssetChildren struct {
-	Id         string 	`json:"id"`
-	Type       string 	`json:"type"`    
+	assetId         string 	`json:"assetId"`
+	assetType       string 	`json:"assetType"`    
 }
 
 // ============================================================================================================================
@@ -76,10 +76,10 @@ func (t *PharmaTrackerChaincode) Invoke(stub shim.ChaincodeStubInterface, functi
 	fmt.Println("starting invoke, for - " + function)
 
 	// Handle different functions
-	if function == "fetch" {             //generic read ledger
-		return read(stub, args)
-	} else if function == "write" {            //generic writes to ledger
+	if function == "write" {            //generic writes to ledger
 		return write_asset(stub, args)
+	} else if function == "update" {           //update an asset from state
+		return update_asset(stub, args)
 	} else if function == "delete" {           //deletes an asset from state
 		return delete_asset(stub, args)
 	}
