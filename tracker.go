@@ -10,40 +10,40 @@ type PharmaTrackerChaincode struct {
 }
 
 type PharmaAsset struct {
-	assetId         		string        		`json:"assetId"`      
-	assetType       		string        		`json:"assetType"`
-	category   				string        		`json:"category"`
-	assetClass      		string        		`json:"assetClass"`
-	assetTraceData  		[]AssetTraceData 	`json:"assetTraceData"`
-	assetData       		AssetData     		`json:"assetData"`
+	AssetId         		string        		`json:"assetId"`      
+	AssetType       		string        		`json:"assetType"`
+	Category   				string        		`json:"category"`
+	AssetClass      		string        		`json:"assetClass"`
+	AssetTraceData  		[]AssetTraceData 	`json:"assetTraceData"`
+	AssetData       		AssetData     		`json:"assetData"`
 }
 
 type AssetData struct {
-	information         	AssetInfo 		 	`json:"information"`
-	children     			[]AssetChildren  	`json:"children"`    
+	Information         	AssetInfo 		 	`json:"information"`
+	Children     			[]AssetChildren  	`json:"children"`    
 }
 
 type AssetTraceData struct {
-	owner         		string `json:"owner"`
-	status   		 	string `json:"status"`
-	moveDateTime      	string `json:"moveDateTime"`
-	location         	string `json:"location"`
-	geoLocation   		string `json:"geoLocation"`
+	Owner         		string `json:"owner"`
+	Status   		 	string `json:"status"`
+	MoveDateTime      	string `json:"moveDateTime"`
+	Location         	string `json:"location"`
+	GeoLocation   		string `json:"geoLocation"`
 }
 
 type AssetInfo struct {
-	assetName         	string `json:"assetName"`
-	company				string `json:"company"`
-	packingType   		string `json:"packingType"`
-	packageSize      	string `json:"packageSize"`
-	mfgDate         	string `json:"mfgDate"`
-	lotNumber   		string `json:"lotNumber"`
-	expiryDate      	string `json:"expiryDate"`
+	AssetName         	string `json:"assetName"`
+	Company				string `json:"company"`
+	PackingType   		string `json:"packingType"`
+	PackageSize      	string `json:"packageSize"`
+	MfgDate         	string `json:"mfgDate"`
+	LotNumber   		string `json:"lotNumber"`
+	ExpiryDate      	string `json:"expiryDate"`
 }
 
 type AssetChildren struct {
-	assetId         string 	`json:"assetId"`
-	assetType       string 	`json:"assetType"`    
+	AssetId         string 	`json:"assetId"`
+	AssetType       string 	`json:"assetType"`    
 }
 
 // ============================================================================================================================

@@ -52,7 +52,7 @@ func get_asset(stub shim.ChaincodeStubInterface, id string) ([]byte, error) {
 	}
 	json.Unmarshal(assetAsBytes, &asset)                   //un stringify it aka JSON.parse()
 
-	if asset.assetId != id {                                     //test if marble is actually here or just nil
+	if asset.AssetId != id {                                     //test if marble is actually here or just nil
 		return nil, errors.New("Asset does not exist - " + id)
 	}
 

@@ -1,15 +1,15 @@
 package main
 
 import (
-	"fmt"
-	"errors"
 	"encoding/json"
+	"errors"
+	"fmt"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 )
 
 // ============================================================================================================================
 // delete_asset() - remove a asset from state and from asset index
-// 
+//
 // Shows Off DelState() - "removing"" a key/value from the ledger
 //
 // Inputs - Array of strings
@@ -27,13 +27,13 @@ func delete_asset(stub shim.ChaincodeStubInterface, args []string) ([]byte, erro
 	id := args[0]
 	// get the asset
 	_, err := get_asset(stub, id)
-	if err != nil{
+	if err != nil {
 		fmt.Println("Failed to find asset by id " + id)
 		return nil, errors.New(err.Error())
 	}
 
 	// remove the asset
-	err = stub.DelState(id)                                                 //remove the key from chaincode state
+	err = stub.DelState(id) //remove the key from chaincode state
 	if err != nil {
 		return nil, errors.New("Failed to delete state")
 	}
@@ -77,7 +77,7 @@ func write_asset(stub shim.ChaincodeStubInterface, args []string) ([]byte, error
 		"assetTraceData":[ {
 			"owner": "` + args[4] + `", 
 			"status": "` + args[5] + `",
-			"assetTraceData": "` + args[6] + `",
+			"moveDateTime": "` + args[6] + `",
 			"location": "` + args[7] + `",
 			"geoLocation": "` + args[8] + `"
 		}],		
@@ -99,42 +99,34 @@ func write_asset(stub shim.ChaincodeStubInterface, args []string) ([]byte, error
 			]
 		}			
 	}`
-	
+
 	fmt.Println("Input PharmaAsset Object - " + str)
 	var pharmaAsset PharmaAsset
 	err = json.Unmarshal([]byte(str), &pharmaAsset)
 	if err != nil {
-		fmt.Println("Error while unmarshalling "+err.Error())
+		fmt.Println("Error while unmarshalling " + err.Error())
 		return nil, errors.New(err.Error())
 	}
 	//fmt.Println("PharmaAsset Object after marshalling - "+)
 	fmt.Printf("PharmaAsset Object after un-marshalling:\n%s", pharmaAsset)
 	if len(args) > 18 {
-		for i := 18; i < len(args); i=i+2 {
+		for i := 18; i < len(args); i = i + 2 {
 			var child AssetChildren
-			child.assetId=args[i]
-			child.assetType=args[i+1]
-			fmt.Println("New child to be appended - ")
-			pharmaAsset.assetData.children = append(pharmaAsset.assetData.children, child)
+			child.AssetId = "ABC"
+			child.AssetType = "NODE"
+			pharmaAsset.AssetData.Children = append(pharmaAsset.AssetData.Children, child)
 		}
 		fmt.Println("PharmaAsset Object after appending children - \n%s", pharmaAsset)
 	}
-	
-	tempIn, err := json.Marshal(&pharmaAsset)
-	fmt.Println("PharmaAsset Object after marshalling - \n%s", tempIn)
-	err = stub.PutState(id+"JBB", tempIn)                         //store asset with id as key
-	if err != nil {
-		return nil, errors.New(err.Error())
-	}
-	
+
 	inputByteStr, err := json.Marshal(pharmaAsset)
 	if err != nil {
-		fmt.Println("Error while marshalling "+err.Error())
+		fmt.Println("Error while marshalling " + err.Error())
 		return nil, errors.New(err.Error())
 	}
-	
+
 	fmt.Println("PharmaAsset Object after marshalling - \n%s", inputByteStr)
-	err = stub.PutState(id, inputByteStr)                         //store asset with id as key
+	err = stub.PutState(id, inputByteStr) //store asset with id as key
 	if err != nil {
 		return nil, errors.New(err.Error())
 	}
@@ -153,33 +145,32 @@ func update_asset(stub shim.ChaincodeStubInterface, args []string) ([]byte, erro
 	id := args[0]
 	// get the asset
 	var asset PharmaAsset
-	assetAsBytes, err := stub.GetState(id)                  //getState retreives a key/value from the ledger
-	if err != nil {                                          //this seems to always succeed, even if key didn't exist
+	assetAsBytes, err := stub.GetState(id) //getState retreives a key/value from the ledger
+	if err != nil {                        //this seems to always succeed, even if key didn't exist
 		return nil, errors.New("Failed to find asset - " + id)
 	}
-	json.Unmarshal(assetAsBytes, &asset)                   //un stringify it aka JSON.parse()
+	json.Unmarshal(assetAsBytes, &asset) //un stringify it aka JSON.parse()
 
-	if asset.assetId != id {                                     //test if marble is actually here or just nil
+	if asset.AssetId != id { //test if marble is actually here or just nil
 		return nil, errors.New("Asset does not exist - " + id)
 	}
-	
+
 	var traceData AssetTraceData
-	traceData.owner=args[1]
-	traceData.status=args[2]
-	traceData.moveDateTime=args[3]
-	traceData.location=args[4]
-	traceData.geoLocation=args[5]
-	fmt.Println("New trace data to be appended - ")
-	asset.assetTraceData = append(asset.assetTraceData, traceData)
-	fmt.Println("PharmaAsset object post update of trace data - ")
+	traceData.Owner = args[1]
+	traceData.Status = args[2]
+	traceData.MoveDateTime = args[3]
+	traceData.Location = args[4]
+	traceData.GeoLocation = args[5]
+	asset.AssetTraceData = append(asset.AssetTraceData, traceData)
+	fmt.Println("PharmaAsset object post update of trace data - %s",asset)
 
 	inputByteStr, err := json.Marshal(asset)
 	if err != nil {
-		fmt.Println("Error while marshalling in update "+err.Error())
+		fmt.Println("Error while marshalling in update " + err.Error())
 		return nil, errors.New(err.Error())
 	}
-	
-	err = stub.PutState(id, inputByteStr)                         //store asset with id as key
+
+	err = stub.PutState(id, inputByteStr) //store asset with id as key
 	if err != nil {
 		return nil, errors.New(err.Error())
 	}
